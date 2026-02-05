@@ -10,5 +10,5 @@ public interface MenuService {
 	List<MenuDto> getItems();
 	List<MenuDto> getItems(String input);
 	MenuDto updateItem(MenuDto menuDto);
-	Boolean deleteItem(Integer id);
+	void deleteItem(Integer id);
 }
