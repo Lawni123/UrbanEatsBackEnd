@@ -3,7 +3,7 @@ package com.urbanEats.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.BeanUtils;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,19 +18,18 @@ public class MenuServiceImpl implements MenuService {
     @Autowired
     private MenuRepo menuRepo;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     // -------- ADD ITEM --------
     @Override
     public MenuDto addItem(MenuDto menuRequest) {
 
-        Menu menu = new Menu();
-        BeanUtils.copyProperties(menuRequest, menu);
+        Menu menu = modelMapper.map(menuRequest, Menu.class);
 
         Menu saved = menuRepo.save(menu);
 
-        MenuDto dto = new MenuDto();
-        BeanUtils.copyProperties(saved, dto);
-
-        return dto;
+        return modelMapper.map(saved, MenuDto.class);
     }
 
     // -------- GET ITEM BY ID --------
@@ -40,10 +39,7 @@ public class MenuServiceImpl implements MenuService {
         Menu menu = menuRepo.findById(Long.valueOf(id))
                 .orElseThrow(() -> new RuntimeException("Menu Item Not Found"));
 
-        MenuDto dto = new MenuDto();
-        BeanUtils.copyProperties(menu, dto);
-
-        return dto;
+        return modelMapper.map(menu, MenuDto.class);
     }
 
     // -------- GET ALL ITEMS --------
@@ -52,29 +48,21 @@ public class MenuServiceImpl implements MenuService {
 
         return menuRepo.findAll()
                 .stream()
-                .map(menu -> {
-                    MenuDto dto = new MenuDto();
-                    BeanUtils.copyProperties(menu, dto);
-                    return dto;
-                })
+                .map(menu -> modelMapper.map(menu, MenuDto.class))
                 .collect(Collectors.toList());
     }
 
-    // -------- SEARCH ITEMS BY NAME --------
+    // -------- SEARCH ITEMS --------
     @Override
     public List<MenuDto> getItems(String input) {
 
         return menuRepo.findByNameContainingIgnoreCase(input)
                 .stream()
-                .map(menu -> {
-                    MenuDto dto = new MenuDto();
-                    BeanUtils.copyProperties(menu, dto);
-                    return dto;
-                })
+                .map(menu -> modelMapper.map(menu, MenuDto.class))
                 .collect(Collectors.toList());
     }
 
-    // -------- UPDATE ITEM (using name since DTO has no id) --------
+    // -------- UPDATE ITEM (using name) --------
     @Override
     public MenuDto updateItem(MenuDto menuDto) {
 
@@ -84,14 +72,11 @@ public class MenuServiceImpl implements MenuService {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Menu Item Not Found"));
 
-        BeanUtils.copyProperties(menuDto, existing);
+        modelMapper.map(menuDto, existing);
 
         Menu updated = menuRepo.save(existing);
 
-        MenuDto dto = new MenuDto();
-        BeanUtils.copyProperties(updated, dto);
-
-        return dto;
+        return modelMapper.map(updated, MenuDto.class);
     }
 
     // -------- DELETE ITEM --------
