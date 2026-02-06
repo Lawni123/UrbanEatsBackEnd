@@ -2,13 +2,14 @@ package com.urbanEats.service;
 
 import java.util.List;
 
+import com.urbanEats.dto.ComboDto;
 import com.urbanEats.request.ComboRequest;
 
 public interface ComboService {
-	void addCombo(ComboRequest request);
-	ComboRequest getCombo(Integer id);
-	List<ComboRequest> getCombos(String input);
-	List<ComboRequest> getCombos();
-	ComboRequest updateCombo();
-	void deleteCombo(Integer id);
+	ComboDto addCombo(ComboRequest request);
+	ComboDto getCombo(Long id);
+	List<ComboDto> getCombos(String input);
+	List<ComboDto> getCombos();
+	ComboDto updateCombo(ComboRequest request);
+	void deleteCombo(Long id);
 }

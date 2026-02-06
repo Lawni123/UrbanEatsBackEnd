@@ -1,5 +1,6 @@
 package com.urbanEats.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,6 +14,7 @@ import com.urbanEats.repo.UserRepo;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
+	@Autowired
 	private UserRepo userRepo;
 
 	@Override

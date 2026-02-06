@@ -4,10 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
+import com.urbanEats.dto.ComboDto;
+import com.urbanEats.dto.ComboItemDto;
 import com.urbanEats.entity.Combo;
 import com.urbanEats.entity.ComboItem;
 import com.urbanEats.entity.Menu;
+import com.urbanEats.exception.ComboException;
 import com.urbanEats.repo.ComboItemRepo;
 import com.urbanEats.repo.ComboRepo;
 import com.urbanEats.repo.MenuRepo;
@@ -15,6 +20,10 @@ import com.urbanEats.request.ComboItemRequest;
 import com.urbanEats.request.ComboRequest;
 import com.urbanEats.service.ComboService;
 
+import jakarta.transaction.Transactional;
+
+@Service
+@Transactional
 public class ComboServiceImpl implements ComboService{
 
 	@Autowired
@@ -26,61 +35,153 @@ public class ComboServiceImpl implements ComboService{
 	@Autowired
 	private MenuRepo menuRepo;
 	
-	@Override
-	public void addCombo(ComboRequest request) {
+	 ComboDto toDto(Combo combo) {
+		ComboDto comboDto = new ComboDto();
+		comboDto.setComboId(combo.getComboId());
+		comboDto.setComboName(combo.getComboName());
+		comboDto.setComboPrice(combo.getComboPrice());
+		comboDto.setImage(combo.getImg());
+		
+		List<ComboItemDto> cIlist = new ArrayList<>();
+		
+		for(ComboItem ci : combo.getComboItems()) {
+			ComboItemDto comboItemDto = new ComboItemDto();
+			comboItemDto.setComboItemId(ci.getComboItemId());
+			comboItemDto.setMenuId(ci.getMenu().getMenuId());
+			comboItemDto.setItemName(ci.getMenu().getName());
+			comboItemDto.setQuantity(ci.getQuantity());
+			
+			cIlist.add(comboItemDto);
+		}
+		
+		comboDto.setItems(cIlist);
+		
+		return comboDto;
+	}
+	
+	Combo toEntity(ComboRequest request) {
 		Combo combo = new Combo();
 		combo.setComboName(request.getComboName());
 		combo.setImg(request.getImg());
+
+		Double totalPrice = 0.0;
+
+		List<ComboItem> comboItems = new ArrayList<>();
+
+		for (ComboItemRequest ci : request.getComboItems()) {
+
+		    Menu menu = menuRepo.findById(ci.getMenuId())
+		            .orElseThrow(() -> new RuntimeException("Menu not found"));
+
+		    ComboItem comboItem = new ComboItem();
+		    comboItem.setCombo(combo);
+		    comboItem.setMenu(menu);
+		    comboItem.setQuantity(ci.getQuantity());
+
+		    comboItems.add(comboItem);
+
+		    totalPrice += menu.getPrice() * ci.getQuantity();
+		}
+
+		combo.setComboPrice(totalPrice);
+		combo.setComboItems(comboItems);
+		return combo;
+	}
+	
+	@Override
+	public ComboDto addCombo(ComboRequest request) {
+		Combo combo = toEntity(request);
+		combo = comboRepo.save(combo);
+		return toDto(combo);
+	}
+
+	@Override
+	public ComboDto getCombo(Long id) {
+		Combo combo = comboRepo.findById(id)
+				.orElseThrow(()->new ComboException("Combo Not Found", HttpStatus.NOT_FOUND));
 		
-		Double totalPrice=0.0;
+		ComboDto comboDto = toDto(combo);
+		return comboDto;
+	}
+
+	@Override
+	public List<ComboDto> getCombos(String input) {
+		// TODO Auto-generated method stub
+		List<Combo> ComboDtoList = comboRepo.findByComboNameContainingIgnoreCase(input);
+		List<ComboDto> cDtoList = new ArrayList<>();
+		for(Combo combo : ComboDtoList) {
+			
+			ComboDto comboDto = toDto(combo);
+			
+			cDtoList.add(comboDto);
+		}
+		return cDtoList;
+	}
+
+	@Override
+	public List<ComboDto> getCombos() {
+		List<Combo> clist = comboRepo.findAll();
 		
-		List<ComboItem> cIlist = new ArrayList<>();
-		for(ComboItemRequest ci : request.getComboItems()) {
-			ComboItem comboItem = new ComboItem();
-			comboItem.setCombo(combo);
+		List<ComboDto> cDtoList = new ArrayList<>();
+		for(Combo combo : clist) {
 			
-			Menu menu = menuRepo.findById(ci.getMenuId()).get();
-			comboItem.setMenu(menu);
-			comboItem.setQuantity(ci.getQuantity());
+			ComboDto comboDto = toDto(combo);
 			
-			cIlist.add(comboItem);
-			
-			totalPrice += menu.getPrice();
+			cDtoList.add(comboDto);
+		}
+		return cDtoList;
+	}
+
+	@Override
+	public ComboDto updateCombo(ComboRequest request) {
+		Combo combo = comboRepo.findById(request.getComboId())
+				.orElseThrow(()->new ComboException("Combo Not Found", HttpStatus.NOT_FOUND));
+		
+		if (request.getComboName() != null) {
+	        combo.setComboName(request.getComboName());
+	    }
+
+	    if (request.getImg() != null) {
+	        combo.setImg(request.getImg());
+	    }
+	
+        
+	    if (request.getComboItems() != null) {
+
+	        comboItemRepo.deleteAll(combo.getComboItems());
+	        combo.getComboItems().clear();
+
+	        List<ComboItem> newItems = new ArrayList<>();
+	        Double price = 0.0;
+	        for (ComboItemRequest itemRequest : request.getComboItems()) {
+
+	            Menu menu = menuRepo.findById(itemRequest.getMenuId())
+	                    .orElseThrow(() -> new RuntimeException("Menu Not Found"));
+
+	            ComboItem comboItem = new ComboItem();
+	            comboItem.setCombo(combo);
+	            comboItem.setMenu(menu);
+	            comboItem.setQuantity(itemRequest.getQuantity());
+
+	            newItems.add(comboItem);
+	            price+=menu.getPrice();
+	        }
+	        combo.setComboPrice(price);
+	        combo.setComboItems(newItems);
+	    }
+	    
+	   combo= comboRepo.save(combo);
+	   
+	   return toDto(combo);
+	}
+
+	@Override
+	public void deleteCombo(Long id) {
+		if(!comboRepo.existsById(id)) {
+			throw new ComboException("Combo Not Found", HttpStatus.NOT_FOUND);
 		}
 		
-		combo.setComboPrice(totalPrice);
-		System.out.println(comboRepo.save(combo));
-		System.out.println(comboItemRepo.saveAll(cIlist)); 
-	}
-
-	@Override
-	public ComboRequest getCombo(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<ComboRequest> getCombos(String input) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<ComboRequest> getCombos() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ComboRequest updateCombo() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void deleteCombo(Integer id) {
-		// TODO Auto-generated method stub
-		
+		comboRepo.deleteById(id);
 	}
 
 }

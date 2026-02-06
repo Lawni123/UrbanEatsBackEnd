@@ -34,6 +34,7 @@ public class GlobalExceptionHandler {
 		error.setErrorCode("SERVER_ERROR");
 		error.setErrorMessage(ex.getMessage());
 		error.setErrorStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+		ex.printStackTrace();
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
 	}
 }
