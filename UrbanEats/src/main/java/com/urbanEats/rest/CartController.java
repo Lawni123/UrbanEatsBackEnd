@@ -23,12 +23,12 @@ public class CartController {
 	private CartService cartService;
 	
 	@PreAuthorize("hasRole('CUSTOMER')")
-	@PutMapping("/secure/add/{userId}/{menuId}")
+	@PutMapping("/secure/add/{menuId}")
 	public ResponseEntity<?> addToCart(
 			@AuthenticationPrincipal CustomUserDetails customUserDetails,
-			@PathVariable Long userId,
 			@PathVariable Long menuId){
-		CartDto cartDto = cartService.addItemToCart(userId, menuId);
+		
+		CartDto cartDto = cartService.addItemToCart(customUserDetails.getUser().getUserId(), menuId);
 		
 		ApiResponse<CartDto> response = new ApiResponse<>();
 		response.setStatus("success");
@@ -39,12 +39,11 @@ public class CartController {
  	}
 	
 	@PreAuthorize("hasRole('CUSTOMER')")
-	@PutMapping("/secure/remove/{userId}/{cartItemId}")
+	@PutMapping("/secure/remove/{cartItemId}")
 	public ResponseEntity<?> removeFromCart(
 			@AuthenticationPrincipal CustomUserDetails customUserDetails,
-			@PathVariable Long userId,
 			@PathVariable Long cartItemId){
-		CartDto cartDto = cartService.removeItemFromCart(userId, cartItemId);
+		CartDto cartDto = cartService.removeItemFromCart(customUserDetails.getUser().getUserId(), cartItemId);
 		
 		ApiResponse<CartDto> response = new ApiResponse<>();
 		response.setStatus("success");
@@ -55,11 +54,10 @@ public class CartController {
  	}
 	
 	@PreAuthorize("hasRole('CUSTOMER')")
-	@GetMapping("/secure/get/{userId}")
-	public ResponseEntity<?> removeFromCart(
-			@AuthenticationPrincipal CustomUserDetails customUserDetails,
-			@PathVariable Long userId){
-		CartDto cartDto = cartService.getCartByUserId(userId);
+	@GetMapping("/secure/get")
+	public ResponseEntity<?> getCartByUserId(
+			@AuthenticationPrincipal CustomUserDetails customUserDetails){
+		CartDto cartDto = cartService.getCartByUserId(customUserDetails.getUser().getUserId());
 		
 		ApiResponse<CartDto> response = new ApiResponse<>();
 		response.setStatus("success");

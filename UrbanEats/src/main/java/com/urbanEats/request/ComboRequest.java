@@ -8,7 +8,6 @@ import lombok.Data;
 
 @Data
 public class ComboRequest {
-	@NotNull
 	private Long comboId;
 	@NotBlank
 	private String comboName;

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.urbanEats.enums.FoodType;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -37,15 +38,15 @@ public class Menu {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(mappedBy = "menu",cascade = CascadeType.ALL)
     private List<CartItem> cartItems;
 
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(mappedBy = "menu",cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
     
     @Size(max = 5000)
     private String img;
     
-    @ManyToMany(mappedBy = "menus")
+    @ManyToMany(mappedBy = "menus",cascade = CascadeType.ALL)
     private List<Offer> offers;
 }
