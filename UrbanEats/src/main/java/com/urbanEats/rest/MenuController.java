@@ -9,9 +9,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import com.urbanEats.dto.MenuDto;
+import com.urbanEats.exception.MenuException;
 import com.urbanEats.response.ApiResponse;
 import com.urbanEats.service.CustomUserDetails;
 import com.urbanEats.service.MenuService;
@@ -27,7 +29,11 @@ public class MenuController {
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/secure/add")
 	public ResponseEntity<?> addItem(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-			@Valid @RequestBody MenuDto dto) {
+			@Valid @RequestBody MenuDto dto
+			,BindingResult result) {
+		if(result.hasErrors()) {
+			throw new MenuException("Invalid Input", HttpStatus.BAD_REQUEST);
+		}
 		MenuDto menuDto = menuService.addItem(dto);
 
 		ApiResponse<MenuDto> response = new ApiResponse<>();
@@ -80,7 +86,11 @@ public class MenuController {
 	@PutMapping("/secure/update")
 	public ResponseEntity<?> updateItem(
 			@AuthenticationPrincipal CustomUserDetails customUserDetails,
-			@Valid @RequestBody MenuDto dto) {
+			@Valid @RequestBody MenuDto dto
+			,BindingResult result) {
+		if(result.hasErrors()) {
+			throw new MenuException("Invalid Input", HttpStatus.BAD_REQUEST);
+		}
 		MenuDto menuDto = menuService.updateItem(dto);
 		ApiResponse<MenuDto> response = new ApiResponse<>();
 		response.setStatus("success");
@@ -93,7 +103,9 @@ public class MenuController {
 	// Only ADMIN can delete
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/secure/delete/{id}")
-	public ResponseEntity<?> deleteItem(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Integer id) {
+	public ResponseEntity<?> deleteItem(
+			@AuthenticationPrincipal CustomUserDetails customUserDetails
+			, @PathVariable Integer id) {
 		menuService.deleteItem(id);
 		
 		ApiResponse<String> response = new ApiResponse<>();

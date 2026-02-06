@@ -13,6 +13,7 @@ import com.urbanEats.entity.Combo;
 import com.urbanEats.entity.ComboItem;
 import com.urbanEats.entity.Menu;
 import com.urbanEats.exception.ComboException;
+import com.urbanEats.exception.MenuException;
 import com.urbanEats.repo.ComboItemRepo;
 import com.urbanEats.repo.ComboRepo;
 import com.urbanEats.repo.MenuRepo;
@@ -71,7 +72,7 @@ public class ComboServiceImpl implements ComboService{
 		for (ComboItemRequest ci : request.getComboItems()) {
 
 		    Menu menu = menuRepo.findById(ci.getMenuId())
-		            .orElseThrow(() -> new RuntimeException("Menu not found"));
+		            .orElseThrow(() -> new MenuException("Menu not found",HttpStatus.NOT_FOUND));
 
 		    ComboItem comboItem = new ComboItem();
 		    comboItem.setCombo(combo);
@@ -156,7 +157,7 @@ public class ComboServiceImpl implements ComboService{
 	        for (ComboItemRequest itemRequest : request.getComboItems()) {
 
 	            Menu menu = menuRepo.findById(itemRequest.getMenuId())
-	                    .orElseThrow(() -> new RuntimeException("Menu Not Found"));
+	                    .orElseThrow(() -> new MenuException("Menu Not Found",HttpStatus.NOT_FOUND));
 
 	            ComboItem comboItem = new ComboItem();
 	            comboItem.setCombo(combo);

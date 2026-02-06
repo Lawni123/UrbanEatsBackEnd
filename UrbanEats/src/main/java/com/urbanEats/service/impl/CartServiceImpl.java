@@ -14,6 +14,8 @@ import com.urbanEats.entity.Cart;
 import com.urbanEats.entity.CartItem;
 import com.urbanEats.entity.Menu;
 import com.urbanEats.exception.CartException;
+import com.urbanEats.exception.MenuException;
+import com.urbanEats.exception.UserException;
 import com.urbanEats.repo.CartRepo;
 import com.urbanEats.repo.MenuRepo;
 import com.urbanEats.repo.UserRepo;
@@ -61,11 +63,11 @@ public class CartServiceImpl implements CartService {
 
 		if (cart == null) {
 			cart = new Cart();
-			cart.setUser(userRepo.findById(userId).orElseThrow(() -> new RuntimeException("User Not Found")));
+			cart.setUser(userRepo.findById(userId).orElseThrow(() -> new UserException("User Not Found",HttpStatus.NOT_FOUND)));
 			cart.setCartItems(new ArrayList<>());
 		}
 
-		Menu menu = menuRepo.findById(menuId).orElseThrow(() -> new RuntimeException("Menu Item Not Found"));
+		Menu menu = menuRepo.findById(menuId).orElseThrow(() -> new MenuException("Menu Item Not Found",HttpStatus.NOT_FOUND));
 
 		Optional<CartItem> existingItem = cart.getCartItems().stream()
 				.filter(ci -> ci.getMenu().getMenuId().equals(menuId)).findFirst();
