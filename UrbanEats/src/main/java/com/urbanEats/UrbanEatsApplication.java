@@ -6,10 +6,10 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 
 @SpringBootApplication
 @EnableMethodSecurity
-public class BurgerAddaApplication {
+public class UrbanEatsApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BurgerAddaApplication.class, args);
+		SpringApplication.run(UrbanEatsApplication.class, args);
 	}
 
 }
