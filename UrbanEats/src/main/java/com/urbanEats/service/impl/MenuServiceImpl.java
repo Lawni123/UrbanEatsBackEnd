@@ -5,10 +5,12 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.urbanEats.dto.MenuDto;
 import com.urbanEats.entity.Menu;
+import com.urbanEats.exception.MenuException;
 import com.urbanEats.repo.MenuRepo;
 import com.urbanEats.service.MenuService;
 
@@ -37,7 +39,7 @@ public class MenuServiceImpl implements MenuService {
     public MenuDto getItem(Integer id) {
 
         Menu menu = menuRepo.findById(Long.valueOf(id))
-                .orElseThrow(() -> new RuntimeException("Menu Item Not Found"));
+                .orElseThrow(() -> new MenuException("Menu Item Not Found",HttpStatus.NOT_FOUND));
 
         return modelMapper.map(menu, MenuDto.class);
     }
@@ -66,11 +68,8 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public MenuDto updateItem(MenuDto menuDto) {
 
-        Menu existing = menuRepo
-                .findByNameContainingIgnoreCase(menuDto.getName())
-                .stream()
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Menu Item Not Found"));
+        Menu existing = menuRepo.findById(menuDto.getMenuId())
+        		.orElseThrow(()->new MenuException("Menu Item Not found",HttpStatus.NOT_FOUND));
 
         modelMapper.map(menuDto, existing);
 
@@ -84,7 +83,7 @@ public class MenuServiceImpl implements MenuService {
     public void deleteItem(Integer id) {
 
         Menu menu = menuRepo.findById(Long.valueOf(id))
-                .orElseThrow(() -> new RuntimeException("Menu Item Not Found"));
+                .orElseThrow(() -> new MenuException("Menu Item Not Found",HttpStatus.NOT_FOUND));
 
         menuRepo.delete(menu);
     }

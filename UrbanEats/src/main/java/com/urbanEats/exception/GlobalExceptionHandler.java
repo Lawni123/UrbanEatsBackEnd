@@ -49,6 +49,26 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(ex.getHttpStatus()).body(error);
 	}
 	
+	@ExceptionHandler(CartException.class)
+	public ResponseEntity<ErrorDto> cartException(CartException ex){
+		ErrorDto error = new ErrorDto();
+		error.setErrorCode("CART_ERROR");
+		error.setErrorMessage(ex.getMessage());
+		error.setErrorStatus(ex.getHttpStatus());
+		ex.printStackTrace();
+		return ResponseEntity.status(ex.getHttpStatus()).body(error);
+	}
+	
+	@ExceptionHandler(MenuException.class)
+	public ResponseEntity<ErrorDto> menuException(MenuException ex){
+		ErrorDto error = new ErrorDto();
+		error.setErrorCode("MENU_ERROR");
+		error.setErrorMessage(ex.getMessage());
+		error.setErrorStatus(ex.getHttpStatus());
+		ex.printStackTrace();
+		return ResponseEntity.status(ex.getHttpStatus()).body(error);
+	}
+	
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorDto> userException(Exception ex){
 		ErrorDto error = new ErrorDto();
