@@ -68,7 +68,7 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public MenuDto updateItem(MenuDto menuDto) {
 
-        Menu existing = menuRepo.findById(menuDto.getMenuId())
+        Menu existing = menuRepo.findById(menuDto.getId())
         		.orElseThrow(()->new MenuException("Menu Item Not found",HttpStatus.NOT_FOUND));
 
         modelMapper.map(menuDto, existing);
