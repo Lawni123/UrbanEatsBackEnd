@@ -9,9 +9,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-
-
-
 	@ExceptionHandler(UserException.class)
 	public ResponseEntity<ErrorDto> UserException(UserException ex){
 		ErrorDto error = new ErrorDto();
