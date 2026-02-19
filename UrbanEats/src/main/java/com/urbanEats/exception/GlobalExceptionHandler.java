@@ -10,24 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
 
-    @ExceptionHandler(UserException.class)
-    public ResponseEntity<ErrorDto> userException(UserException ex){
-        ErrorDto error = new ErrorDto();
-        error.setErrorCode("USER_ERROR");
-        error.setErrorMessage(ex.getMessage());
-        error.setErrorStatus(ex.getHttpStatus());
-        ex.printStackTrace();
-        return ResponseEntity.status(ex.getHttpStatus()).body(error);
-    }
-    
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorDto> UserException(Exception ex){
-        ErrorDto error = new ErrorDto();
-        error.setErrorCode("SERVER_ERROR");
-        error.setErrorMessage(ex.getMessage());
-        error.setErrorStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
-    }
+
 
 	@ExceptionHandler(UserException.class)
 	public ResponseEntity<ErrorDto> UserException(UserException ex){
@@ -63,6 +46,16 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ErrorDto> menuException(MenuException ex){
 		ErrorDto error = new ErrorDto();
 		error.setErrorCode("MENU_ERROR");
+		error.setErrorMessage(ex.getMessage());
+		error.setErrorStatus(ex.getHttpStatus());
+		ex.printStackTrace();
+		return ResponseEntity.status(ex.getHttpStatus()).body(error);
+	}
+	
+	@ExceptionHandler(OfferException.class)
+	public ResponseEntity<ErrorDto> offerException(OfferException ex){
+		ErrorDto error = new ErrorDto();
+		error.setErrorCode("OFFER_ERROR");
 		error.setErrorMessage(ex.getMessage());
 		error.setErrorStatus(ex.getHttpStatus());
 		ex.printStackTrace();

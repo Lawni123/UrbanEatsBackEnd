@@ -12,4 +12,6 @@ public interface OfferService {
 	List<OfferDto> getOffersByDate(LocalDateTime presentDate);
 	List<OfferDto> getOffersByPrice(Double Price);
 	List<OfferDto> getOfferByName();
+	OfferDto updateOffer(OfferDto offerDto);
+	void deleteOffer(Integer id);
  }
