@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.urbanEats.dto.ComboDto;
 import com.urbanEats.dto.ComboItemDto;
+import com.urbanEats.dto.PricingResponseDto;
 import com.urbanEats.entity.Combo;
 import com.urbanEats.entity.ComboItem;
 import com.urbanEats.entity.Menu;
@@ -20,6 +21,7 @@ import com.urbanEats.repo.MenuRepo;
 import com.urbanEats.request.ComboItemRequest;
 import com.urbanEats.request.ComboRequest;
 import com.urbanEats.service.ComboService;
+import com.urbanEats.service.OfferService;
 
 import jakarta.transaction.Transactional;
 
@@ -32,6 +34,9 @@ public class ComboServiceImpl implements ComboService{
 	
 	@Autowired
 	private ComboItemRepo comboItemRepo;
+	
+	@Autowired
+    private OfferService offerService;
 	
 	@Autowired
 	private MenuRepo menuRepo;
@@ -102,6 +107,15 @@ public class ComboServiceImpl implements ComboService{
 				.orElseThrow(()->new ComboException("Combo Not Found", HttpStatus.NOT_FOUND));
 		
 		ComboDto comboDto = toDto(combo);
+		
+		PricingResponseDto pricing = offerService.getComboPricing(combo);
+
+		comboDto.setOriginalPrice(pricing.getOriginalPrice());
+		comboDto.setFinalPrice(pricing.getFinalPrice());
+		comboDto.setDiscountAmount(pricing.getDiscountAmount());
+		comboDto.setOfferApplied(pricing.getOfferApplied());
+		comboDto.setOfferTitle(pricing.getOfferTitle());
+		
 		return comboDto;
 	}
 
@@ -113,6 +127,14 @@ public class ComboServiceImpl implements ComboService{
 		for(Combo combo : ComboDtoList) {
 			
 			ComboDto comboDto = toDto(combo);
+			
+			PricingResponseDto pricing = offerService.getComboPricing(combo);
+
+			comboDto.setOriginalPrice(pricing.getOriginalPrice());
+			comboDto.setFinalPrice(pricing.getFinalPrice());
+			comboDto.setDiscountAmount(pricing.getDiscountAmount());
+			comboDto.setOfferApplied(pricing.getOfferApplied());
+			comboDto.setOfferTitle(pricing.getOfferTitle());
 			
 			cDtoList.add(comboDto);
 		}
@@ -127,6 +149,14 @@ public class ComboServiceImpl implements ComboService{
 		for(Combo combo : clist) {
 			
 			ComboDto comboDto = toDto(combo);
+			
+			PricingResponseDto pricing = offerService.getComboPricing(combo);
+
+			comboDto.setOriginalPrice(pricing.getOriginalPrice());
+			comboDto.setFinalPrice(pricing.getFinalPrice());
+			comboDto.setDiscountAmount(pricing.getDiscountAmount());
+			comboDto.setOfferApplied(pricing.getOfferApplied());
+			comboDto.setOfferTitle(pricing.getOfferTitle());
 			
 			cDtoList.add(comboDto);
 		}

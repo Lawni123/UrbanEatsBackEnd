@@ -47,7 +47,7 @@ public class MenuController {
 	}
 
 	// All USERs can view single item
-	@GetMapping("/secure/get/{id}")
+	@GetMapping("/public/get/{id}")
 	public ResponseEntity<?>  getItem(@PathVariable Integer id) {
 
 		MenuDto menuDto = menuService.getItem(id);
@@ -60,7 +60,7 @@ public class MenuController {
 	}
 
 	// All USERs can view all items
-	@GetMapping("/secure/all")
+	@GetMapping("/public/all")
 	public ResponseEntity<?> getAllItems() {
 		List<MenuDto> menuDtoList = menuService.getItems();
 		ApiResponse<List<MenuDto>> response = new ApiResponse<>();
@@ -72,7 +72,7 @@ public class MenuController {
 	}
 
 	// All USERs can search items
-	@GetMapping("/secure/search/{input}")
+	@GetMapping("/public/search/{input}")
 	public ResponseEntity<?> searchItems(@PathVariable String input) {
 		List<MenuDto> menuDtoList = menuService.getItems(input);
 		ApiResponse<List<MenuDto>> response = new ApiResponse<>();

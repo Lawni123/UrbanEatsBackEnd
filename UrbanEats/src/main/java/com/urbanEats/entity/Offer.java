@@ -42,14 +42,7 @@ public class Offer {
     )
     private List<Menu> menus;
 
-    // Category Level Offers
-    @ManyToMany
-    @JoinTable(
-        name = "offer_category",
-        joinColumns = @JoinColumn(name = "offer_id"),
-        inverseJoinColumns = @JoinColumn(name = "category_id")
-    )
-    private List<Category> categories;
+  
 
     // Combo Level Offers
     @ManyToMany

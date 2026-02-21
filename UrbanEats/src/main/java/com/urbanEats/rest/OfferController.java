@@ -11,47 +11,58 @@ import com.urbanEats.dto.OfferDto;
 import com.urbanEats.service.OfferService;
 
 @RestController
-@RequestMapping("/offers")
+@RequestMapping("/api/offers")
 public class OfferController {
 
     @Autowired
     private OfferService offerService;
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping
+    @PostMapping("/secure/add")
     public OfferDto addOffer(@RequestBody OfferDto dto) {
         return offerService.addOffer(dto);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/public/get/{id}")
     public OfferDto getOffer(@PathVariable Integer id) {
         return offerService.getOffer(id);
     }
 
-    @GetMapping
+    @GetMapping("/public/get")
     public List<OfferDto> getAllOffers() {
         return offerService.getAllOffers();
     }
 
-    @GetMapping("/active")
+    @GetMapping("/public/active")
     public List<OfferDto> getOffersByDate() {
         return offerService.getOffersByDate(LocalDateTime.now());
     }
 
-    @GetMapping("/price/{price}")
-    public List<OfferDto> getOffersByPrice(@PathVariable Double price) {
-        return offerService.getOffersByPrice(price);
-    }
-
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping
+    @PutMapping("/secure/update")
     public OfferDto updateOffer(@RequestBody OfferDto dto) {
         return offerService.updateOffer(dto);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/secure/delete/{id}")
     public void deleteOffer(@PathVariable Integer id) {
         offerService.deleteOffer(id);
+    }
+    
+    @PostMapping("/secure/{offerId}/apply-to-menus")
+    public void applyOfferToMenus(
+            @PathVariable Long offerId,
+            @RequestBody List<Long> menuIds) {
+
+        offerService.applyOfferToMenus(offerId, menuIds);
+    }
+    
+    @PostMapping("/secure/{offerId}/apply-to-combos")
+    public void applyOfferToCombos(
+            @PathVariable Long offerId,
+            @RequestBody List<Long> comboIds) {
+
+        offerService.applyOfferToCombos(offerId, comboIds);
     }
 }

@@ -65,7 +65,8 @@ public class AppConfig {
                 .requestMatchers(
                     "/api/user/auth/**", // Public authentication endpoints
                     "/api/user/public/**",
-                    "/api/combo/public/**"// Public menu-related endpoints
+                    "/api/combo/public/**",// Public menu-related endpoints
+                    "/api/menu/public/**"
                 ).permitAll()
                 .requestMatchers(
                     "/v3/api-docs/**", // Swagger API documentation

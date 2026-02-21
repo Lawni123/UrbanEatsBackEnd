@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.urbanEats.dto.CartDto;
 import com.urbanEats.dto.CartItemDto;
+import com.urbanEats.dto.PricingResponseDto;
 import com.urbanEats.entity.Cart;
 import com.urbanEats.entity.CartItem;
 import com.urbanEats.entity.Menu;
@@ -20,6 +21,7 @@ import com.urbanEats.repo.CartRepo;
 import com.urbanEats.repo.MenuRepo;
 import com.urbanEats.repo.UserRepo;
 import com.urbanEats.service.CartService;
+import com.urbanEats.service.OfferService;
 
 import jakarta.transaction.Transactional;
 
@@ -33,6 +35,9 @@ public class CartServiceImpl implements CartService {
 	@Autowired
 	private UserRepo userRepo;
 
+	  @Autowired
+	    private OfferService offerService;
+	  
 	@Autowired
 	private MenuRepo menuRepo;
 
@@ -41,6 +46,10 @@ public class CartServiceImpl implements CartService {
 		
 		cartDto.setCartId(cart.getCartId());
 		cartDto.setUserId(cart.getUser().getUserId());
+		
+		Double totalOriginalPrice=0.0;
+		Double totalDiscountPrice=0.0;
+		Double totalFinalPrice = 0.0;
 		List<CartItemDto> cartItemList = new ArrayList<>();
 		for(CartItem ci:cart.getCartItems()) {
 			CartItemDto cIDto = new CartItemDto();
@@ -50,8 +59,22 @@ public class CartServiceImpl implements CartService {
 			cIDto.setImg(ci.getMenu().getImg());
 			cIDto.setQuantity(ci.getQuantity());
 			
+			PricingResponseDto pricing = offerService.getMenuPricing(menuRepo.findById(ci.getMenu().getMenuId()).get());
+			cIDto.setOriginalPrice(pricing.getOriginalPrice());
+			cIDto.setDiscountAmount(pricing.getDiscountAmount());
+			cIDto.setFinalPrice(pricing.getFinalPrice());
+			
+			totalOriginalPrice+=cIDto.getOriginalPrice();
+			totalDiscountPrice+=cIDto.getDiscountAmount();
+			totalFinalPrice += cIDto.getFinalPrice();
+			
 			cartItemList.add(cIDto);
 		}
+		
+		cartDto.setOriginalPrice(totalOriginalPrice);
+		cartDto.setDiscountAmount(totalDiscountPrice);
+		cartDto.setFinalPrice(totalFinalPrice);
+		
 		cartDto.setCartItems(cartItemList);
 		
 		return cartDto;

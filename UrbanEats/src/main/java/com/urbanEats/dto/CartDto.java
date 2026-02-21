@@ -9,4 +9,8 @@ public class CartDto {
 	private Long cartId;
 	private Long userId;
 	private List<CartItemDto> cartItems;
+	
+	private Double originalPrice;
+    private Double finalPrice;
+    private Double discountAmount;
 }

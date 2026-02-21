@@ -9,16 +9,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.urbanEats.dto.MenuDto;
+import com.urbanEats.dto.PricingResponseDto;
 import com.urbanEats.entity.Menu;
 import com.urbanEats.exception.MenuException;
 import com.urbanEats.repo.MenuRepo;
 import com.urbanEats.service.MenuService;
+import com.urbanEats.service.OfferService;
 
 @Service
 public class MenuServiceImpl implements MenuService {
 
     @Autowired
     private MenuRepo menuRepo;
+    
+    @Autowired
+    private OfferService offerService;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -39,9 +44,21 @@ public class MenuServiceImpl implements MenuService {
     public MenuDto getItem(Integer id) {
 
         Menu menu = menuRepo.findById(Long.valueOf(id))
-                .orElseThrow(() -> new MenuException("Menu Item Not Found",HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new MenuException("Menu Item Not Found", HttpStatus.NOT_FOUND));
 
-        return modelMapper.map(menu, MenuDto.class);
+        // Map basic fields
+        MenuDto dto = modelMapper.map(menu, MenuDto.class);
+
+        // Get pricing with offer
+        PricingResponseDto pricing = offerService.getMenuPricing(menu);
+
+        dto.setOriginalPrice(pricing.getOriginalPrice());
+        dto.setFinalPrice(pricing.getFinalPrice());
+        dto.setDiscountAmount(pricing.getDiscountAmount());
+        dto.setOfferApplied(pricing.getOfferApplied());
+        dto.setOfferTitle(pricing.getOfferTitle());
+
+        return dto;
     }
 
     // -------- GET ALL ITEMS --------
@@ -50,7 +67,20 @@ public class MenuServiceImpl implements MenuService {
 
         return menuRepo.findAll()
                 .stream()
-                .map(menu -> modelMapper.map(menu, MenuDto.class))
+                .map(menu -> {
+
+                    MenuDto dto = modelMapper.map(menu, MenuDto.class);
+
+                    PricingResponseDto pricing = offerService.getMenuPricing(menu);
+
+                    dto.setOriginalPrice(pricing.getOriginalPrice());
+                    dto.setFinalPrice(pricing.getFinalPrice());
+                    dto.setDiscountAmount(pricing.getDiscountAmount());
+                    dto.setOfferApplied(pricing.getOfferApplied());
+                    dto.setOfferTitle(pricing.getOfferTitle());
+
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -60,7 +90,20 @@ public class MenuServiceImpl implements MenuService {
 
         return menuRepo.findByNameContainingIgnoreCase(input)
                 .stream()
-                .map(menu -> modelMapper.map(menu, MenuDto.class))
+                .map(menu -> {
+
+                    MenuDto dto = modelMapper.map(menu, MenuDto.class);
+
+                    PricingResponseDto pricing = offerService.getMenuPricing(menu);
+
+                    dto.setOriginalPrice(pricing.getOriginalPrice());
+                    dto.setFinalPrice(pricing.getFinalPrice());
+                    dto.setDiscountAmount(pricing.getDiscountAmount());
+                    dto.setOfferApplied(pricing.getOfferApplied());
+                    dto.setOfferTitle(pricing.getOfferTitle());
+
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 

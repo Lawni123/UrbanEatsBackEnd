@@ -18,10 +18,17 @@ public class MenuDto {
     @NotNull
     private Double price;
 
-    @NotBlank
-    private String foodType;
+    @NotNull
+    private FoodType foodType;
 
     @NotBlank
     private String img;
+    
+    private Double originalPrice;
+    private Double finalPrice;
+    private Double discountAmount;
+    private String offerTitle;
+    private Boolean offerApplied;
+
 
 }
