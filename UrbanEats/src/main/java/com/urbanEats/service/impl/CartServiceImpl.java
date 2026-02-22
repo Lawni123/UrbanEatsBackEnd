@@ -17,6 +17,7 @@ import com.urbanEats.entity.Menu;
 import com.urbanEats.exception.CartException;
 import com.urbanEats.exception.MenuException;
 import com.urbanEats.exception.UserException;
+import com.urbanEats.repo.CartItemRepo;
 import com.urbanEats.repo.CartRepo;
 import com.urbanEats.repo.MenuRepo;
 import com.urbanEats.repo.UserRepo;
@@ -32,6 +33,8 @@ public class CartServiceImpl implements CartService {
 	@Autowired
 	private CartRepo cartRepo;
 
+	@Autowired
+	private CartItemRepo cartItemRepo;
 	@Autowired
 	private UserRepo userRepo;
 
@@ -148,6 +151,18 @@ public class CartServiceImpl implements CartService {
 		cartDto = toDto(cart);
 		
 		return cartDto;
+	}
+	
+	@Override
+	public void clearCart(Long userId) {
+		Cart cart = cartRepo.findByUserId(userId)
+	            .orElseThrow(() -> new CartException("No Items In the Cart", HttpStatus.NOT_FOUND));
+		
+		 if (cart.getCartItems().isEmpty()) {
+		        throw new CartException("Cart is already empty", HttpStatus.BAD_REQUEST);
+		    }
+
+		cartItemRepo.deleteByCart(cart);
 	}
 
 }

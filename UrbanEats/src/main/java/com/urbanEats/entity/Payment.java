@@ -4,6 +4,7 @@ import com.urbanEats.enums.PaymentMethod;
 import com.urbanEats.enums.PaymentStatus;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -21,10 +22,11 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long paymentId;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id", unique = true)
     private Order order;
-
+    
+    private String transactionId;
     private PaymentMethod paymentMethod;  // UPI, CARD, CASH
     private PaymentStatus paymentStatus;  // SUCCESS, FAILED, PENDING
 }

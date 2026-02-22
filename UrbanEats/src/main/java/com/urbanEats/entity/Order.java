@@ -2,12 +2,14 @@ package com.urbanEats.entity;
 
 import java.util.List;
 
+import com.urbanEats.enums.OrderStatus;
 import com.urbanEats.enums.OrderType;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -27,24 +29,25 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
 
     @Enumerated(EnumType.STRING)
     private OrderType orderType;
+    
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
 
-    private Integer tableNumber;
+    private Double totalAmount;
 
-    private double totalAmount;
+    private Double discountAmount;
 
-    private double discountAmount;
+    private Double finalAmount;
 
-    private double finalAmount;
-
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<OrderItem> orderItems;
 
-    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private Payment payment;
 }

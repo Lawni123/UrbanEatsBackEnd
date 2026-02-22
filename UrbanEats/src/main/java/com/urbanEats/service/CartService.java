@@ -6,4 +6,5 @@ public interface CartService {
 	CartDto addItemToCart(Long userId,Long menuId);
 	CartDto removeItemFromCart(Long userId,Long cartItemId);
 	CartDto getCartByUserId(Long userId);
+	void clearCart(Long userId);
 }
