@@ -249,13 +249,14 @@ public class OrderServiceImpl implements OrderService {
 		Order order = orderRepo.findById(orderId)
 				.orElseThrow(() -> new OrderException("Order Not Found", HttpStatus.NOT_FOUND));
 
+		
+		if (!userId.equals(order.getUser().getUserId())) {
+			throw new OrderException("Cant Cancel Any Others Orders", HttpStatus.UNAUTHORIZED);
+		}
 		if (!order.getOrderStatus().equals(OrderStatus.PREPARING)
 				|| !order.getOrderStatus().equals(OrderStatus.PREPARED)) {
 			throw new OrderException("You Cannot Cancel the Order Once It is Started Preparing Or already prepared",
 					HttpStatus.BAD_REQUEST);
-		}
-		if (!userId.equals(order.getUser().getUserId())) {
-			throw new OrderException("Cant Cancel Any Others Orders", HttpStatus.UNAUTHORIZED);
 		}
 		order.setOrderStatus(OrderStatus.CANCELLED);
 

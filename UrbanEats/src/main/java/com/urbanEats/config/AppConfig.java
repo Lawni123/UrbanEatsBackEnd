@@ -129,7 +129,7 @@ public class AppConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
             .info(new Info()
-                .title("BurgerAdda API")
+                .title("UrbanEats API")
                 .version("1.0")
                 .description("API documentation for BurgerAdda System"))
             .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication")) // Secures API with Bearer token

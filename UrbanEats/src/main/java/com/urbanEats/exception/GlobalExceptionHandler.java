@@ -59,6 +59,25 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(ex.getHttpStatus()).body(error);
 	}
 	
+	@ExceptionHandler(OrderException.class)
+	public ResponseEntity<ErrorDto> OrderException(OrderException ex){
+		ErrorDto error = new ErrorDto();
+		error.setErrorCode("ORDER_ERROR");
+		error.setErrorMessage(ex.getMessage());
+		error.setErrorStatus(ex.getHttpStatus());
+		ex.printStackTrace();
+		return ResponseEntity.status(ex.getHttpStatus()).body(error);
+	}
+	
+	@ExceptionHandler(PaymentException.class)
+	public ResponseEntity<ErrorDto> OrderException(PaymentException ex){
+		ErrorDto error = new ErrorDto();
+		error.setErrorCode("PAYMENT_ERROR");
+		error.setErrorMessage(ex.getMessage());
+		error.setErrorStatus(ex.getHttpStatus());
+		ex.printStackTrace();
+		return ResponseEntity.status(ex.getHttpStatus()).body(error);
+	}
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorDto> userException(Exception ex){
 		ErrorDto error = new ErrorDto();
