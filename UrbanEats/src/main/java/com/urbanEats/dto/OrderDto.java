@@ -15,6 +15,7 @@ public class OrderDto {
 	private Long userId;
 	private OrderType orderType;
 	private OrderStatus orderStatus;
+	private String description;
     private double totalAmount;
     private double discountAmount;
     private double finalAmount;

@@ -129,4 +129,35 @@ public class UserServiceImpl implements UserService {
 		return mapper.map(userRepo.save(findUser), UserDto.class);
 	}
 
+	@Override
+	public UserDto addKitchenStaff(SignupRequest request) {
+
+		if (userRepo.findByEmail(request.getEmail()).isPresent()) {
+			throw new UserException("User Email Already Exist", HttpStatus.CONFLICT);
+		}
+
+		User user = new User();
+		user.setName(request.getName());
+		user.setEmail(request.getEmail());
+		user.setPhone(request.getPhone());
+		user.setPassword(passwordEncoder.encode(request.getPassword()));
+		user.setRole(request.getRole());
+
+		User savedUser = userRepo.save(user);
+
+		emailService.sendMail(
+		        request.getEmail(),
+		        "Welcome to UrbanEats - Kitchen Staff Account Created",
+		        "Hello " + user.getName() + ",\r\n\r\n"
+		                + "Your Kitchen Staff account has been created successfully by the Admin.\r\n"
+		                + "You can now log in to the UrbanEats system and start managing kitchen operations.\r\n\r\n"
+		                + "If you have any questions, please contact the Admin.\r\n\r\n"
+		                + "Regards,\r\n"
+		                + "UrbanEats Team"
+		);
+
+
+		return mapper.map(userRepo.save(savedUser), UserDto.class);
+	}
+
 }

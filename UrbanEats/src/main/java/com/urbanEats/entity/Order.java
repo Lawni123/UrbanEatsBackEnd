@@ -44,7 +44,7 @@ public class Order {
     private Double discountAmount;
 
     private Double finalAmount;
-
+    private String description;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<OrderItem> orderItems;
 

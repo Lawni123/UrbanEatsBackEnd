@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -100,6 +101,26 @@ public class UserController {
 	    response.setStatus("success");
 	    response.setData(updated);
 	    return ResponseEntity.ok(response);
+	}
+	
+	@PostMapping("/auth/kitchen")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<?> addKitchenStaff(
+			@Valid @RequestBody SignupRequest signupRequest,
+			BindingResult bindingResult){
+		
+		if(bindingResult.hasErrors()) {
+			throw new UserException("Invalid Input", HttpStatus.BAD_REQUEST);
+		}
+		
+		UserDto user=userService.addKitchenStaff(signupRequest);
+		
+		ApiResponse<UserDto> response = new ApiResponse<>();
+		response.setStatus("success");
+		response.setMessage("Successfully Added the Kitchen Staff");
+		response.setData(user);
+		
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);	
 	}
 
 }

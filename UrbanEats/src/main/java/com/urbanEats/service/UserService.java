@@ -13,4 +13,5 @@ public interface UserService {
 	String userSignup(SignupRequest request);
 	Map<String,Object> userLogin(LoginRequest request);
 	UserDto update(Long userId,MultipartFile imageFile,String isChanged,String name);
+	UserDto addKitchenStaff(SignupRequest request);
 }

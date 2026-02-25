@@ -19,6 +19,7 @@ import com.urbanEats.enums.OrderStatus;
 import com.urbanEats.enums.OrderType;
 import com.urbanEats.enums.PaymentMethod;
 import com.urbanEats.exception.OrderException;
+import com.urbanEats.request.OrderByCartRequest;
 import com.urbanEats.request.OrderByComboRequest;
 import com.urbanEats.request.OrderByMenuRequest;
 import com.urbanEats.response.ApiResponse;
@@ -88,10 +89,14 @@ public class OrderController {
 	@PreAuthorize("hasRole('CUSTOMER')")
 	public ResponseEntity<?> createOrderFromCart(
 			@AuthenticationPrincipal CustomUserDetails customUserDetails,
-			@RequestParam OrderType orderType
+			@Valid @RequestBody OrderByCartRequest request,
+			BindingResult result
 			){
 		
-		OrderDto orderDto = orderService.createOrderFromCart(customUserDetails.getUser().getUserId(),orderType );
+		if(result.hasErrors()) {
+			throw new OrderException("Inalid Request", HttpStatus.BAD_REQUEST);
+		}
+		OrderDto orderDto = orderService.createOrderFromCart(customUserDetails.getUser().getUserId(),request);
 		
 		ApiResponse<OrderDto> response = new ApiResponse<>();
 		response.setMessage("Succesfully Orderd");
@@ -166,7 +171,7 @@ public class OrderController {
 	}
 	
 	@PutMapping("/cancel/{orderId}")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('CUSTOMER')")
 	public ResponseEntity<?> cancelOrder(
 			@AuthenticationPrincipal CustomUserDetails customUserDetails,
 			@PathVariable Long orderId

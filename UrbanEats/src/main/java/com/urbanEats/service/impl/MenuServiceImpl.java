@@ -76,12 +76,12 @@ public class MenuServiceImpl implements MenuService {
                     dto.setOriginalPrice(pricing.getOriginalPrice());
                     dto.setFinalPrice(pricing.getFinalPrice());
                     dto.setDiscountAmount(pricing.getDiscountAmount());
-                    dto.setOfferApplied(pricing.getOfferApplied());
+                    dto.setOfferApplied(pricing.getOfferApplied());			
                     dto.setOfferTitle(pricing.getOfferTitle());
 
                     return dto;
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // -------- SEARCH ITEMS --------

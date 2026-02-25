@@ -36,6 +36,7 @@ import com.urbanEats.repo.MenuRepo;
 import com.urbanEats.repo.OrderRepo;
 import com.urbanEats.repo.PaymentRepo;
 import com.urbanEats.repo.UserRepo;
+import com.urbanEats.request.OrderByCartRequest;
 import com.urbanEats.request.OrderByComboRequest;
 import com.urbanEats.request.OrderByMenuRequest;
 import com.urbanEats.service.EmailService;
@@ -78,6 +79,7 @@ public class OrderServiceImpl implements OrderService {
 		dto.setDiscountAmount(entity.getDiscountAmount());
 		dto.setFinalAmount(entity.getFinalAmount());
 		dto.setTotalAmount(entity.getTotalAmount());
+		dto.setDescription(entity.getDescription());
 		if (entity.getPayment() != null) {
 			dto.setPaymentStatus(entity.getPayment().getPaymentStatus());
 			dto.setPaymentMethod(entity.getPayment().getPaymentMethod());
@@ -114,7 +116,7 @@ public class OrderServiceImpl implements OrderService {
 		order.setUser(user);
 		order.setOrderType(request.getOrderType());
 		order.setOrderStatus(OrderStatus.UNPAID);
-
+		order.setDescription(request.getDescription());
 		OrderItem item = new OrderItem();
 		item.setMenu(menu);
 		item.setQuantity(request.getQuantity());
@@ -149,7 +151,7 @@ public class OrderServiceImpl implements OrderService {
 		order.setUser(user);
 		order.setOrderType(request.getOrderType());
 		order.setOrderStatus(OrderStatus.UNPAID);
-
+		order.setDescription(request.getDescription());
 		List<OrderItem> oIList = combo.getComboItems().stream().map(cItem -> {
 			OrderItem item = new OrderItem();
 			item.setMenu(cItem.getMenu());
@@ -175,7 +177,7 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public OrderDto createOrderFromCart(Long userId, OrderType orderType) {
+	public OrderDto createOrderFromCart(Long userId, OrderByCartRequest request) {
 		User user = userRepo.findById(userId)
 				.orElseThrow(() -> new UserException("User Not Found", HttpStatus.NOT_FOUND));
 
@@ -184,7 +186,8 @@ public class OrderServiceImpl implements OrderService {
 
 		Order order = new Order();
 		order.setUser(user);
-		order.setOrderType(orderType);
+		order.setOrderType(request.getOrderType());
+		order.setDescription(request.getDescription());
 		order.setOrderStatus(OrderStatus.UNPAID);
 
 		double totalAmount = 0.0;

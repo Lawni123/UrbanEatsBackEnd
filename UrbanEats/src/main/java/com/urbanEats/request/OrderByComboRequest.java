@@ -2,6 +2,7 @@ package com.urbanEats.request;
 
 import com.urbanEats.enums.OrderType;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -13,4 +14,6 @@ public class OrderByComboRequest {
 	private Integer quantity;
 	@NotNull
 	private OrderType orderType;
+	@NotBlank
+	private String description;
 }

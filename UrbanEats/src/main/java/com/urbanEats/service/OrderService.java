@@ -6,6 +6,7 @@ import com.urbanEats.dto.OrderDto;
 import com.urbanEats.enums.OrderStatus;
 import com.urbanEats.enums.OrderType;
 import com.urbanEats.enums.PaymentMethod;
+import com.urbanEats.request.OrderByCartRequest;
 import com.urbanEats.request.OrderByComboRequest;
 import com.urbanEats.request.OrderByMenuRequest;
 
@@ -18,7 +19,7 @@ public interface OrderService {
 
     OrderDto createOrderFromCombo(Long userId, OrderByComboRequest request);
 
-    OrderDto createOrderFromCart(Long userId,OrderType orderType);
+    OrderDto createOrderFromCart(Long userId,OrderByCartRequest request);
 
 
     OrderDto getOrderById(Long orderId);
